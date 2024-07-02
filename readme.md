@@ -16,7 +16,18 @@
 * Database: Mysql
 * Using lampp/xampp for local environment.
 * phpunit for testing
+
+# Generate the migration and update the database schema
+* ``` php bin/console make:migration ```
+* `` php bin/console doctrine:migrations:migrate ``
 # Command
 `` php bin/console app:process-xml ``
 Run this command will process xml file and store data into Mysql Database
+
+# Test Coverage
+* Generate Test Coverage Report in text & Html, use following command:
+`` XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text `` &
+`` XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html=coverage ``
+
+# N.B: I have attach my "kaufland.sql" file, either you can import this with existing table or make new migration.
 

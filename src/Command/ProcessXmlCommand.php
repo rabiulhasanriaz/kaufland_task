@@ -16,8 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class ProcessXmlCommand extends Command
 {
-    private $em;
-    private $logger;
+    private EntityManagerInterface $em;
+    private LoggerInterface $logger;
     public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
     {
         $this->em = $em;
@@ -31,27 +31,35 @@ class ProcessXmlCommand extends Command
             $xml = simplexml_load_file('xml/feed.xml');
 
             foreach ($xml->item as $item) {
-                $product = new ProcessXMLEntity();
-                $product->setEntityId((int)$item->entity_id);
-                $product->setCategoryName((string)$item->CategoryName);
-                $product->setSku((string)$item->sku);
-                $product->setName((string)$item->name);
-                $product->setDescription((string)$item->description);
-                $product->setShortdesc((string)$item->shortdesc);
-                $product->setPrice((float)$item->price);
-                $product->setLink((string)$item->link);
-                $product->setImage((string)$item->image);
-                $product->setBrand((string)$item->Brand);
-                $product->setRating((int)$item->Rating);
-                $product->setCaffeineType((string)$item->CaffeineType);
-                $product->setCount($item->Count ? (int)$item->Count : null);
-                $product->setFlavored((string)$item->Flavored === 'Yes');
-                $product->setSeasonal((string)$item->Seasonal === 'Yes');
-                $product->setInstock((string)$item->Instock === 'Yes');
-                $product->setFacebook((string)$item->Facebook === '1');
-                $product->setIsKCup((string)$item->IsKCup === '1');
+                $entityId = $item['entity_id'];
 
-                $this->em->persist($product);
+                // Check if entity with this entity_id already exists
+                $existingEntity = $this->em->getRepository(ProcessXMLEntity::class)->findOneBy(['entity_id' => $entityId]);
+                if (!$existingEntity) {
+                    $product = new ProcessXMLEntity();
+                    $product->setEntityId((int)$item->entity_id);
+                    $product->setCategoryName((string)$item->CategoryName);
+                    $product->setSku((string)$item->sku);
+                    $product->setName((string)$item->name);
+                    $product->setDescription((string)$item->description);
+                    $product->setShortdesc((string)$item->shortdesc);
+                    $product->setPrice((float)$item->price);
+                    $product->setLink((string)$item->link);
+                    $product->setImage((string)$item->image);
+                    $product->setBrand((string)$item->Brand);
+                    $product->setRating((int)$item->Rating);
+                    $product->setCaffeineType((string)$item->CaffeineType);
+                    $product->setCount($item->Count ? (int)$item->Count : null);
+                    $product->setFlavored((string)$item->Flavored === 'Yes');
+                    $product->setSeasonal((string)$item->Seasonal === 'Yes');
+                    $product->setInstock((string)$item->Instock === 'Yes');
+                    $product->setFacebook((string)$item->Facebook === '1');
+                    $product->setIsKCup((string)$item->IsKCup === '1');
+
+                    $this->em->persist($product);
+                } else {
+                    $this->logger->info("Entity with entity_id $entityId already exists. Skipping insert.");
+                }
             }
 
             $this->em->flush();

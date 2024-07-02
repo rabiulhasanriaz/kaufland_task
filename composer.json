@@ -68,6 +68,7 @@
         }
     },
     "require-dev": {
+        "phpunit/php-code-coverage": "^10.1",
         "phpunit/phpunit": "^10.5",
         "symfony/maker-bundle": "^1.60"
     }
