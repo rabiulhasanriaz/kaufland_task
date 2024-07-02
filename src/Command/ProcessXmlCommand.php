@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'app:process-xml',
-    description: 'Add a short description for your command',
+    description: 'Process XML Data command',
 )]
 class ProcessXmlCommand extends Command
 {
