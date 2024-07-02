@@ -1,0 +1,39 @@
+version: '3.3'
+
+services:
+  app:
+    image: php:8.1-fpm
+    container_name: symfony_app
+    working_dir: /var/www/symfony
+    volumes:
+      - .:/var/www/symfony
+    networks:
+      - symfony
+
+  web:
+    image: nginx:alpine
+    container_name: symfony_web
+    volumes:
+      - .:/var/www/symfony
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "8000:80"
+    networks:
+      - symfony
+
+  db:
+    image: mysql:8.0
+    container_name: symfony_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kaufland
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - "3306:3306"
+    networks:
+      - symfony
+
+networks:
+  symfony:
+    driver: bridge
