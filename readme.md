@@ -16,7 +16,8 @@
 * Database: Mysql
 * Using lampp/xampp for local environment.
 * phpunit for testing
-
+# Run the application
+* `` symfony server:start ``
 # Generate the migration and update the database schema
 * ``` php bin/console make:migration ```
 * `` php bin/console doctrine:migrations:migrate ``
