@@ -6,6 +6,15 @@
 parameters:
 
 services:
+    App\DataStorage\DataStorageInterface: '@App\DataStorage\DoctrineDataStorage'
+
+        # Define the ProcessXmlCommand service
+    App\Command\ProcessXmlCommand:
+        arguments:
+            $dataStorage: '@App\DataStorage\DataStorageInterface'
+            $logger: '@Psr\Log\LoggerInterface'
+        tags:
+            - { name: 'console.command' }
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

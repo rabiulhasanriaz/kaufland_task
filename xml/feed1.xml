@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+    <item>
+        <entity_id>1</entity_id>
+        <CategoryName><![CDATA[Category 1]]></CategoryName>
+        <sku>SKU1</sku>
+        <name><![CDATA[Product 1]]></name>
+        <description><![CDATA[]]></description>
+        <shortdesc><![CDATA[Short description]]></shortdesc>
+        <price>10.5</price>
+        <link>http://example.com/product1</link>
+        <image>http://example.com/images/product1.jpg</image>
+        <Brand><![CDATA[Brand1]]></Brand>
+        <Rating>5</Rating>
+        <CaffeineType><![CDATA[Caffeinated]]></CaffeineType>
+        <Count>10</Count>
+        <Flavored>No</Flavored>
+        <Seasonal>No</Seasonal>
+        <Instock>Yes</Instock>
+        <Facebook>1</Facebook>
+        <IsKCup>0</IsKCup>
+    </item>
+</catalog>

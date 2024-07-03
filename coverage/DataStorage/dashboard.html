@@ -2,7 +2,7 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Dashboard for /opt/lampp/htdocs/kaufland_task/src/Command</title>
+  <title>Dashboard for /opt/lampp/htdocs/kaufland_task/src/DataStorage</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="../_css/bootstrap.min.css?v=10.1.15" rel="stylesheet" type="text/css">
   <link href="../_css/nv.d3.min.css?v=10.1.15" rel="stylesheet" type="text/css">
@@ -17,7 +17,7 @@
       <nav aria-label="breadcrumb">
        <ol class="breadcrumb">
          <li class="breadcrumb-item"><a href="../index.html">/opt/lampp/htdocs/kaufland_task/src</a></li>
-         <li class="breadcrumb-item"><a href="index.html">Command</a></li>
+         <li class="breadcrumb-item"><a href="index.html">DataStorage</a></li>
          <li class="breadcrumb-item active">(Dashboard)</li>
 
        </ol>
@@ -155,7 +155,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#classCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,1,0], "Class Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,1], "Class Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -173,7 +173,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#methodCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,1,1], "Method Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,4], "Method Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -223,7 +223,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Cyclomatic Complexity');
 
     d3.select('#classComplexity svg')
-      .datum(getComplexityData([[97.43589743589743,7,"<a href=\"ProcessXmlCommand.php.html#13\">App\\Command\\ProcessXmlCommand<\/a>"]], 'Class Complexity'))
+      .datum(getComplexityData([[100,4,"<a href=\"DoctrineDataStorage.php.html#8\">App\\DataStorage\\DoctrineDataStorage<\/a>"]], 'Class Complexity'))
       .transition()
       .duration(500)
       .call(chart);
@@ -247,7 +247,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Method Complexity');
 
     d3.select('#methodComplexity svg')
-      .datum(getComplexityData([[100,1,"<a href=\"ProcessXmlCommand.php.html#22\">App\\Command\\ProcessXmlCommand::__construct<\/a>"],[97.22222222222221,6,"<a href=\"ProcessXmlCommand.php.html#29\">App\\Command\\ProcessXmlCommand::execute<\/a>"]], 'Method Complexity'))
+      .datum(getComplexityData([[100,1,"<a href=\"DoctrineDataStorage.php.html#12\">App\\DataStorage\\DoctrineDataStorage::__construct<\/a>"],[100,1,"<a href=\"DoctrineDataStorage.php.html#17\">App\\DataStorage\\DoctrineDataStorage::findExistingEntity<\/a>"],[100,1,"<a href=\"DoctrineDataStorage.php.html#22\">App\\DataStorage\\DoctrineDataStorage::persistEntity<\/a>"],[100,1,"<a href=\"DoctrineDataStorage.php.html#27\">App\\DataStorage\\DoctrineDataStorage::flush<\/a>"]], 'Method Complexity'))
       .transition()
       .duration(500)
       .call(chart);

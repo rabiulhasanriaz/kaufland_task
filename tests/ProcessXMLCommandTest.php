@@ -3,7 +3,10 @@
 namespace App\Tests;
 
 use App\Command\ProcessXmlCommand;
+use App\Entity\ProcessXMLEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use App\DataStorage\DataStorageInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Application;
@@ -11,59 +14,92 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ProcessXMLCommandTest extends TestCase
 {
-    public function testSomething(): void
+    private DataStorageInterface & MockObject $dataStorage;
+    private LoggerInterface & MockObject $logger;
+
+    protected function setUp(): void
     {
-        $this->assertTrue(true);
+        $this->dataStorage = $this->createMock(DataStorageInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->command = new ProcessXMLCommand($this->dataStorage, $this->logger);
     }
     public function testExecute(): void
     {
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($entity) {
+        $this->dataStorage->expects($this->any())
+            ->method('findExistingEntity')
+            ->willReturnCallback(function ($entityId) {
+                // Simulate finding an existing entity with even entity_id
+                return $entityId % 2 === 0 ? new ProcessXMLEntity() : null;
             });
-        $entityManager->expects($this->once())
-            ->method('flush');
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->never())
-        ->method('error');
 
-        $command = new ProcessXmlCommand($entityManager, $logger);
+        $this->dataStorage->expects($this->any())
+            ->method('persistEntity')
+            ->willReturnCallback(function ($entity) {
+                // Simulate persisting the entity
+            });
 
-        $xmlData = '<xml><item><entity_id>1</entity_id><CategoryName>Category 1</CategoryName><sku>SKU1</sku><name>Product 1</name></item></xml>';
+        $this->logger->expects($this->never())
+            ->method('error');
+
+        $xmlData = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+    <item>
+        <entity_id>1</entity_id>
+        <CategoryName><![CDATA[Category 1]]></CategoryName>
+        <sku>SKU1</sku>
+        <name><![CDATA[Product 1]]></name>
+        <description><![CDATA[]]></description>
+        <shortdesc><![CDATA[Short description]]></shortdesc>
+        <price>10.5</price>
+        <link>http://example.com/product1</link>
+        <image>http://example.com/images/product1.jpg</image>
+        <Brand><![CDATA[Brand1]]></Brand>
+        <Rating>5</Rating>
+        <CaffeineType><![CDATA[Caffeinated]]></CaffeineType>
+        <Count>10</Count>
+        <Flavored>No</Flavored>
+        <Seasonal>No</Seasonal>
+        <Instock>Yes</Instock>
+        <Facebook>1</Facebook>
+        <IsKCup>0</IsKCup>
+    </item>
+</catalog>
+XML;
+
+        // Write XML content to a temporary file
         file_put_contents('xml/feed1.xml', $xmlData);
 
         $application = new Application();
-        $application->add($command);
-        $commandTester = new CommandTester($command);
+        $application->add($this->command);
+
+        $commandTester = new CommandTester($this->command);
         $commandTester->execute([
-            'command' => $command->getName(),
+            'command' => $this->command->getName(),
         ]);
+
+        // Assertions
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('XML data has been processed and stored into the database.', $output);
 
+        // Clean up: remove temporary XML file
         unlink('xml/feed1.xml');
     }
     public function testExecuteFailure(): void
     {
-
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects($this->once())
-            ->method('persist')
+        $this->dataStorage->expects($this->once())
+            ->method('persistEntity')
             ->willThrowException(new \Exception('Mock exception during persistence'));
 
-        // Mock LoggerInterface
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())
+        $this->logger->expects($this->once())
             ->method('error')
             ->with($this->stringContains('Error processing XML file: Mock exception during persistence'));
-        $command = new ProcessXmlCommand($entityManager, $logger);
         $application = new Application();
-        $application->add($command);
+        $application->add($this->command);
 
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->command);
         $commandTester->execute([
-            'command' => $command->getName(),
+            'command' => $this->command->getName(),
         ]);
 
         $output = $commandTester->getDisplay();
