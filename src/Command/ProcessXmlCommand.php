@@ -32,6 +32,7 @@ class ProcessXmlCommand extends Command
 
             foreach ($xml->item as $item) {
                 $entityId = $item->entity_id;
+                $skippedEntities = [];
                 // Check if entity with this entity_id already exists
                 $existingEntity = $this->em->getRepository(ProcessXMLEntity::class)->findOneBy(['entity_id' => $entityId]);
 
