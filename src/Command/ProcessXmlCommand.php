@@ -31,10 +31,10 @@ class ProcessXmlCommand extends Command
             $xml = simplexml_load_file('xml/feed.xml');
 
             foreach ($xml->item as $item) {
-                $entityId = $item['entity_id'];
-
+                $entityId = $item->entity_id;
                 // Check if entity with this entity_id already exists
                 $existingEntity = $this->em->getRepository(ProcessXMLEntity::class)->findOneBy(['entity_id' => $entityId]);
+
                 if (!$existingEntity) {
                     $product = new ProcessXMLEntity();
                     $product->setEntityId((int)$item->entity_id);
@@ -58,13 +58,16 @@ class ProcessXmlCommand extends Command
 
                     $this->em->persist($product);
                 } else {
-                    $this->logger->info("Entity with entity_id $entityId already exists. Skipping insert.");
+                    $skippedEntities[] = $entityId;
                 }
             }
 
             $this->em->flush();
-
-            $output->writeln('XML data has been processed and stored into the database.');
+            if (!empty($skippedEntities)) {
+                $output->writeln("Entity ID's are already exist in the database");
+            }else{
+                $output->writeln('XML data has been processed and stored into the database.');
+            }
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
